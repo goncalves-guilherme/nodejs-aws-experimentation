@@ -1,5 +1,7 @@
 import { SecretsManagerClient, ListSecretsCommand, GetSecretValueCommand } from "@aws-sdk/client-secrets-manager";
 
+import { AWS_REGION } from "./config.js"
+
 async function getSecretsListAsync(client) {
     const params = { 
         MaxResults: 100 
@@ -38,13 +40,12 @@ async function getSecretValueAsync(client, secretName) {
 
 async function main() {
     try {
-        const AWS_REGION = 'eu-west-2';
-        
         const client = new SecretsManagerClient({ region: AWS_REGION});
 
         const aws_secrets = await getSecretsListAsync(client);
 
         const secret_values = await Promise.all(aws_secrets.map(s => getSecretValueAsync(client, s.Name)));
+        
     } catch (error) {
         console.error('Main error:', error);
     }
